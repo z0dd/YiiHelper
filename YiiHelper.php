@@ -4,8 +4,13 @@
 */
 class YiiHelper
 {
-	/* Рекурсивно конвертирует модель Yii со всеми отношениями в массив */
-	public static function convertModelToArray($models)
+    /**
+     * Рекурсивно конвертирует модель Yii со всеми отношениями в массив 
+     * @param  is_subclass_of CActiveRecord
+     * @param  boolean
+     * @return array
+     */
+	public static function convertModelToArray($models, $dynamicAttributes=FALSE)
 	{
 		if (is_array($models))
             $arrayMode = TRUE;
@@ -22,7 +27,9 @@ class YiiHelper
                     $relations[$key] = self::convertModelToArray($model->$key);
                 }
             }
-            $all = array_merge($model->getAttributes(), $relations);
+
+            $dynamicAttributes = $dynamicAttributes ? get_class_vars($model) : [];
+            $all = array_merge($model->getAttributes(), $dynamicAttributes, $relations);
 
             if ($arrayMode)
                 array_push($result, $all);
